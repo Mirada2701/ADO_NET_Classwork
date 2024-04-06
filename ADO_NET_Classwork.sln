@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "01_IntroToADO_NET", "01_IntroToADO_NET\01_IntroToADO_NET.csproj", "{E125E868-A3CE-4ABE-9FD6-0FDF51B3717A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "02_DataAccessLayer", "02_DataAccessLayer\02_DataAccessLayer.csproj", "{1E79FE17-4F80-4BDB-94FD-38F1AB01E296}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E125E868-A3CE-4ABE-9FD6-0FDF51B3717A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E125E868-A3CE-4ABE-9FD6-0FDF51B3717A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E125E868-A3CE-4ABE-9FD6-0FDF51B3717A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E79FE17-4F80-4BDB-94FD-38F1AB01E296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E79FE17-4F80-4BDB-94FD-38F1AB01E296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E79FE17-4F80-4BDB-94FD-38F1AB01E296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E79FE17-4F80-4BDB-94FD-38F1AB01E296}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
