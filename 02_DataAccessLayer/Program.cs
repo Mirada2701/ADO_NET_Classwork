@@ -1,5 +1,8 @@
 ﻿using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace _02_DataAccessLayer
 {
@@ -8,10 +11,10 @@ namespace _02_DataAccessLayer
     {
         private SqlConnection connection;
         private string connectionString;
-        public SportShopDB()
+        public SportShopDB(string serverName, string dbName)
         {
-            connectionString = @"Data Source = LEGION5\SQLEXPRESS;
-                                        Initial Catalog = SportShop;
+            connectionString = $@"Data Source = {serverName};
+                                        Initial Catalog = {dbName};
                                         Integrated Security = true;Connect Timeout = 2";
             connection = new SqlConnection(connectionString);
             connection.Open();
@@ -25,22 +28,45 @@ namespace _02_DataAccessLayer
         //[D]elete
         public void Create(Product product)
         {
+            //string cmdText = $@"INSERT INTO Products
+            //                VALUES ('{product.Name}', 
+            //                        '{product.Type}', 
+            //                         {product.Quatity}, 
+            //                         {product.CostPrice}, 
+            //                        '{product.Producer}', 
+            //                         {product.Price})";
             string cmdText = $@"INSERT INTO Products
-                               VALUES ('{product.Name}', '{product.Type}', 
-                                        {product.Quantity}, {product.CostPrice},
-                                       '{product.Producer}', {product.Price})";
+                            VALUES (@name, 
+                                    @type, 
+                                    @quantity, 
+                                    @costPrice, 
+                                    @producer, 
+                                    @price)";
             SqlCommand cmd = new SqlCommand(cmdText, connection);
+            cmd.Parameters.AddWithValue("name", product.Name);
+            cmd.Parameters.AddWithValue("type", product.Type);
+            cmd.Parameters.AddWithValue("quantity", product.Quantity);
+            cmd.Parameters.AddWithValue("costPrice", product.CostPrice);
+            cmd.Parameters.AddWithValue("producer", product.Producer);
+            cmd.Parameters.AddWithValue("price", product.Price);
+
             cmd.ExecuteNonQuery();
             Console.WriteLine("Product was added to database!");
         }
         public void AddNewSalles(Sale s)
         {
             string cmdText = $@"INSERT INTO Salles
-                               VALUES ({s.ProductId}, 
-                                       {s.Price}, {s.Quantity},
-                                       {s.EmployeeId}, {s.ClientId},
-                                       {s.SaleDate})";
+                               VALUES (@pro_id, 
+                                       @price, @quantity,
+                                       @e_id, @c_id,
+                                       @sale_date)";
             SqlCommand cmd = new SqlCommand(cmdText, connection);
+            cmd.Parameters.AddWithValue("pro_id", s.ProductId);
+            cmd.Parameters.AddWithValue("price", s.Price);
+            cmd.Parameters.AddWithValue("quantity", s.Quantity);
+            cmd.Parameters.AddWithValue("e_id", s.EmployeeId);
+            cmd.Parameters.AddWithValue("c_id", s.ClientId);
+            cmd.Parameters.AddWithValue("sale_date", s.SaleDate);
             cmd.ExecuteNonQuery();
             Console.WriteLine("Sale was added to database!");
         }
@@ -74,6 +100,7 @@ namespace _02_DataAccessLayer
                                 where ClientId = (select Id from Clients where FullName = '{fullname}')
                                 order by Date desc";
             SqlCommand command = new SqlCommand(cmdText, connection);
+            command.Parameters.Add("fullname", System.Data.SqlDbType.NVarChar).Value = fullname;
             SqlDataReader reader = command.ExecuteReader();
             Sale sale = new Sale();
 
@@ -124,63 +151,78 @@ namespace _02_DataAccessLayer
             }
             return e;
         }
-        public List<Product> GetAll()//Read
+        private List<Product> GetProductsByQuery(SqlDataReader reader)
         {
-            string cmdText = @"select * from Products";
-
-            SqlCommand command = new SqlCommand(cmdText, connection);
-            SqlDataReader reader = command.ExecuteReader();
+           
             List<Product> products = new List<Product>();
 
-            var pr = products.Select(p => p);
             while (reader.Read())
             {
                 products.Add(new Product()
                 {
-                Id = (int)reader[0],
-                Name = (string)reader[1],
-                Type = (string)reader[2],
-                Quantity = (int)reader[3],
-                CostPrice = (int)reader[4],
-                Producer = (string)reader[5],
-                Price = (int)reader[6]
+                    Id = (int)reader[0],
+                    Name = (string)reader[1],
+                    Type = (string)reader[2],
+                    Quantity = (int)reader[3],
+                    CostPrice = (int)reader[4],
+                    Producer = (string)reader[5],
+                    Price = (int)reader[6]
                 });
             }
             reader.Close();
             return products;
         }
+        public List<Product> GetAll()//Read
+        {
+            string cmdText = @"select * from Products";
+            SqlCommand command = new SqlCommand(cmdText, connection);
+            SqlDataReader reader = command.ExecuteReader();
+            return this.GetProductsByQuery(reader);
+        }
         public Product GetOneProduct(int id)
         {
             string cmdText = $@"select * from Products where Id = {id}";
-
             SqlCommand command = new SqlCommand(cmdText, connection);
             SqlDataReader reader = command.ExecuteReader();
-            Product product = new Product();
+            return this.GetProductsByQuery(reader).FirstOrDefault()!;
+           
+        }
+        public List<Product> GetAllByName(string name)
+        {
+            //name = "Ball';drop database SportShop;--"
+            //Ball';drop database SportShop;--
+            string cmdText = $@"select * from Products where Name = '{name}'";
 
-            while (reader.Read())
+            SqlCommand command = new SqlCommand(cmdText, connection);
+            //command.Parameters.Add("name", System.Data.SqlDbType.NVarChar).Value = name;
+            SqlParameter parameter = new SqlParameter()
             {
-                product.Id = (int)reader[0];
-                product.Name = (string)reader[1];
-                product.Type = (string)reader[2];
-                product.Quantity = (int)reader[3];
-                product.CostPrice = (int)reader[4];
-                product.Producer = (string)reader[5];
-                product.Price = (int)reader[6];
-            }
-            reader.Close();
-            return product;
+                ParameterName = "name",
+                SqlDbType = System.Data.SqlDbType.NVarChar,
+                Value = name
+            };
+            command.Parameters.Add(parameter);
+
+            SqlDataReader reader = command.ExecuteReader();
+            return this.GetProductsByQuery(reader);
         }
         public void Update(Product product)
         {
-            string cmdText = $@"Update Products
-                               SET Name = '{product.Name}',
-                                   TypeProduct = '{product.Type}', 
-                                   Quantity = {product.Quantity},
-                                   CostPrice = {product.CostPrice},
-                                   Producer = '{product.Producer}',
-                                   Price = {product.Price}
-                                   where Id = {product.Id}";
+            string cmdText = $@"UPDATE Products
+                              SET Name =  @name, 
+                                TypeProduct = @type, 
+                                Quantity = @quantity, 
+                                CostPrice = @costPrice, 
+                                Producer = @producer, 
+                                Price =@price
+                                where Id = {product.Id}";
             SqlCommand cmd = new SqlCommand(cmdText, connection);
+            cmd.Parameters.AddWithValue("name", product.Name);
+            cmd.Parameters.AddWithValue("type", product.Type);
+            cmd.Parameters.AddWithValue("quantity", product.Quantity);
+            cmd.Parameters.AddWithValue("costPrice", product.CostPrice);
+            cmd.Parameters.AddWithValue("producer", product.Producer);
+            cmd.Parameters.AddWithValue("price", product.Price);
             cmd.ExecuteNonQuery();
             Console.WriteLine("Product was updated to database!");
         }
@@ -196,7 +238,19 @@ namespace _02_DataAccessLayer
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            SportShopDB dB = new SportShopDB();
+            SportShopDB dB = new SportShopDB("LEGION5\\SQLEXPRESS", "SportShop");
+
+            Console.WriteLine("Enter product name to search : ");
+            string name = Console.ReadLine();
+
+            List<Product> products = dB.GetAllByName(name);
+            foreach (var item in products)
+            {
+                Console.WriteLine($"{item.Id,5} {item.Name,-20}{item.Price,10}");
+            }
+            
+
+
             /*
             Product product = new Product()
             { 
@@ -210,10 +264,7 @@ namespace _02_DataAccessLayer
             //dB.Create(product);
             //dB.Delete(8);
 
-            //foreach(var item in dB.GetAll())
-            //{
-            //    Console.WriteLine($"{item.Id,5} {item.Name,-20}{item.Price,10}");
-            //}
+            
             Product pr = dB.GetOneProduct(1);
             Console.WriteLine($"{pr.Id,5} {pr.Name,-20}{pr.Price,10} {pr.CostPrice,10}");
             pr.CostPrice -= 50;
@@ -221,30 +272,31 @@ namespace _02_DataAccessLayer
             Console.WriteLine($"{pr.Id,5} {pr.Name,-20}{pr.Price,10} {pr.CostPrice,10}");
 
             dB.Update(pr);
-            */
-            //----------------------------------HW---------------------------------------------
-            Sale sale = new Sale()
-            { 
-            ProductId = 3,
-            Price = 1400,
-            Quantity=2,
-            EmployeeId = 2,
-            ClientId = 2,
-            SaleDate = DateTime.Now,
-            };
-            //dB.AddNewSalles(sale);
             
-            foreach(var item in dB.GetAllSalles())
-            {
-                Console.WriteLine(item);
-            }
-            Console.WriteLine("-------------------------------------------\n");
-            Sale s = dB.GetLastSaleClient("Петрук Степан Романович");
-            Console.WriteLine(s);
+            //----------------------------------HW---------------------------------------------
+            //Sale sale = new Sale()
+            //{ 
+            //ProductId = 3,
+            //Price = 1400,
+            //Quantity=2,
+            //EmployeeId = 2,
+            //ClientId = 2,
+            //SaleDate = DateTime.Now,
+            //};
+            ////dB.AddNewSalles(sale);
 
-            Console.WriteLine("-------------------------------------------\n");
-            Employee e = dB.GetMostSaleEmployee();
-            Console.WriteLine(e);
+            //foreach(var item in dB.GetAllSalles())
+            //{
+            //    Console.WriteLine(item);
+            //}
+            //Console.WriteLine("-------------------------------------------\n");
+            //Sale s = dB.GetLastSaleClient("Петрук Степан Романович");
+            //Console.WriteLine(s);
+
+            //Console.WriteLine("-------------------------------------------\n");
+            //Employee e = dB.GetMostSaleEmployee();
+            //Console.WriteLine(e);
+            */
         }
     }
 }
