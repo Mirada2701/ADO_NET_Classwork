@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "04_data_access", "04_data_a
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "05_DisconnectedMode", "05_DisconnectedMode\05_DisconnectedMode.csproj", "{2200AF12-C7A0-4910-B214-B7A8D3D4D7F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "06_LinqToDatabase", "06_LinqToDatabase\06_LinqToDatabase.csproj", "{2B6A13E4-5368-4425-96C8-6D95D19C4C56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "07_IntroToEF", "07_IntroToEF\07_IntroToEF.csproj", "{E78ED03A-4AE4-4447-95F9-6756D013C63F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{2200AF12-C7A0-4910-B214-B7A8D3D4D7F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2200AF12-C7A0-4910-B214-B7A8D3D4D7F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2200AF12-C7A0-4910-B214-B7A8D3D4D7F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B6A13E4-5368-4425-96C8-6D95D19C4C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B6A13E4-5368-4425-96C8-6D95D19C4C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B6A13E4-5368-4425-96C8-6D95D19C4C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B6A13E4-5368-4425-96C8-6D95D19C4C56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E78ED03A-4AE4-4447-95F9-6756D013C63F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E78ED03A-4AE4-4447-95F9-6756D013C63F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E78ED03A-4AE4-4447-95F9-6756D013C63F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E78ED03A-4AE4-4447-95F9-6756D013C63F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

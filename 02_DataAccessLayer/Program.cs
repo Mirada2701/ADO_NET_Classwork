@@ -11,17 +11,17 @@ namespace _02_DataAccessLayer
     {
         static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            SportShopDB dB = new SportShopDB("LEGION5\\SQLEXPRESS", "SportShop");
+            //Console.OutputEncoding = Encoding.UTF8;
+            //SportShopDB dB = new SportShopDB("LEGION5\\SQLEXPRESS", "SportShop");
 
-            Console.WriteLine("Enter product name to search : ");
-            string name = Console.ReadLine();
+            //Console.WriteLine("Enter product name to search : ");
+            //string name = Console.ReadLine();
 
-            List<Product> products = dB.GetAllByName(name);
-            foreach (var item in products)
-            {
-                Console.WriteLine($"{item.Id,5} {item.Name,-20}{item.Price,10}");
-            }            
+            //List<Product> products = dB.GetAllByName(name);
+            //foreach (var item in products)
+            //{
+            //    Console.WriteLine($"{item.Id,5} {item.Name,-20}{item.Price,10}");
+            //}            
 
 
             /*
